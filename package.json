@@ -1,0 +1,26 @@
+{
+  "name": "easy-feed-oven",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Les Orchard <me@lmorchard.com>",
+  "license": "MIT",
+  "dependencies": {
+    "abort-controller": "^3.0.0",
+    "classnames": "^2.2.6",
+    "commander": "^5.1.0",
+    "convict": "^6.0.0",
+    "dotenv": "^8.2.0",
+    "escape-html": "^1.0.3",
+    "feedparser": "^2.2.10",
+    "mkdirp": "^1.0.4",
+    "node-fetch": "^2.6.0",
+    "nodemon": "^2.0.4",
+    "onchange": "^7.0.2",
+    "opmlparser": "^0.8.0",
+    "p-queue": "^6.4.0",
+    "pino": "^6.3.2",
+    "pino-pretty": "^4.0.0",
+    "rimraf": "^3.0.2",
+    "sanitize-html": "^1.27.0"
+  }
+}
