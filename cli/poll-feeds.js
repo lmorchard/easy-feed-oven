@@ -1,3 +1,4 @@
+const config = require("../lib/config");
 const { default: PQueue } = require('p-queue');
 const { MetaPriorityQueue } = require("../lib/queue");
 
@@ -9,7 +10,7 @@ module.exports = (init, program) => {
     .action(init(command, "poll-feeds"));
 };
 
-async function command(options, env, context) {
+async function command(options, context) {
   const { models, log, exit } = context;
   const { knex, Feed, FeedItem } = models;
 
@@ -19,7 +20,7 @@ async function command(options, env, context) {
   log.info("Polling %s feeds...", count);
 
   const fetchQueue = new PQueue({
-    concurrency: 8,
+    concurrency: config.feedPollConcurrency,
     queueClass: MetaPriorityQueue({
       onAdd: (meta) => {
         log.debug("Fetch queue add %s", JSON.stringify(meta));
