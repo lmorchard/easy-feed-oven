@@ -3,7 +3,12 @@ const makeLog = require("../lib/log");
 const { setupModels } = require("../models");
 
 async function setupCommands(program) {
-  const commandModules = ["opml-import", "poll-feeds"];
+  const commandModules = [
+    "add-feed",
+    "remove-feed",
+    "opml-import",
+    "poll-feeds",
+  ];
   commandModules.forEach((name) => require(`./${name}`)(init, program));
 }
 
