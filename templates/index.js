@@ -7,6 +7,9 @@ const page = ({ title = "Easy Feed Oven" }, content) => html`
       <meta charset="utf-8" />
       <title>${title}</title>
       <style type="text/css">
+body {
+  background-color: #ddd;
+}
         .feeds {
           margin: 0;
           padding: 0;        
@@ -15,6 +18,10 @@ const page = ({ title = "Easy Feed Oven" }, content) => html`
         .feeds .feed {
           list-style-type: none;        
           margin-bottom: 1em;
+        }
+
+        .feed > .title {
+          font-size: 1.5em;
         }
 
         .feeditems {
@@ -28,12 +35,15 @@ const page = ({ title = "Easy Feed Oven" }, content) => html`
         }
 
         .feeditems .feeditem {
+          background-color: #fff;
           border: 1px solid #aaa;
           padding: 1em;
           margin-right: 1em;
           margin-bottom: 1em;
           list-style-type: none;
-          flex-basis: 14%;    
+          flex-basis: 16%;
+          flex-grow: 1;
+           box-shadow: 0.25em 0.25em 0.5em rgba(0, 0, 0, 0.3);
         }
 
         .feeditem .title {
@@ -43,6 +53,7 @@ const page = ({ title = "Easy Feed Oven" }, content) => html`
         .feeditem .text {
           display: block;
         }
+      
       </style>
     </head>
     <body>
