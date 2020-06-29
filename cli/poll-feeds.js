@@ -7,7 +7,7 @@ module.exports = (init, program) => {
     .command("poll-feeds")
     .description("Poll feeds for updated content")
     .option("-f, --force", "Force polling on fresh feeds")
-    .action(init(command, "poll-feeds"));
+    .action(init(command));
 };
 
 async function command(options, context) {

@@ -23,6 +23,8 @@ const BaseModel = require("./BaseModel");
 // TODO: make MAX_ITEMS_TO_IMPORT configurable?
 const MAX_ITEMS_TO_IMPORT = 100;
 
+const DEFAULT_FEED_CHARSET = "utf-8";
+
 class Feed extends guid(BaseModel) {
   static get tableName() {
     return "Feeds";
@@ -46,70 +48,21 @@ class Feed extends guid(BaseModel) {
     return ["resourceUrl"];
   }
 
-  static get virtualAttributes() {
-    return ["hrefs"];
-  }
-
-  hrefs() {
-    const { API_BASE_URL } = this.constructor.config();
-    return {
-      self: `${API_BASE_URL}/feeds/${this.id}`,
-      items: `${API_BASE_URL}/feeds/${this.id}/items`,
-    };
-  }
-
   static async queryWithParams({
     id = null,
     folder = null,
     limit = null,
     after = null,
     before = null,
-    itemsLimit = 0,
   } = {}) {
-    const decorateWithItemCounts = async (result, single = false) => {
-      if (itemsLimit === 0) {
-        return result;
-      }
-
-      result = result
-        // Naive eager used here so itemsLimit applies per-feed
-        // rather than for all items between feeds
-        .eagerAlgorithm(Feed.NaiveEagerAlgorithm)
-        .eager("items")
-        .modifyEager("items", builder => {
-          builder
-            .orderBy("date", "DESC")
-            .orderBy("id", "DESC")
-            .limit(itemsLimit);
-          if (after) {
-            builder.where("date", ">", after);
-          }
-        });
-
-      const countItems = async row => {
-        let query = row.$relatedQuery("items").count("* as itemsCount");
-        if (after) {
-          query = query.where("date", ">", after);
-        }
-        return assign(row, {
-          itemsRemaining: Math.max(
-            0,
-            (await query.first()).itemsCount - itemsLimit
-          ),
-        });
-      };
-
-      return single ? countItems(await result) : result.map(countItems);
-    };
-
     if (id) {
       return {
-        feeds: [await decorateWithItemCounts(this.query().findById(id), true)],
+        feeds: await this.query().findById(id),
         feedsRemaining: 0,
       };
     }
 
-    const applyParams = result => {
+    const applyParams = (result) => {
       if (after) {
         result = result.where("lastNewItem", ">", after);
       }
@@ -126,17 +79,11 @@ class Feed extends guid(BaseModel) {
     };
 
     const { feedsCount } = await applyParams(
-      this.query()
-        .count("* as feedsCount")
-        .first()
+      this.query().count("* as feedsCount").first()
     );
 
-    const feeds = await decorateWithItemCounts(
-      applyParams(
-        this.query()
-          .orderBy("lastNewItem", "DESC")
-          .orderBy("updated_at", "DESC")
-      )
+    const feeds = await applyParams(
+      this.query().orderBy("lastNewItem", "DESC").orderBy("updated_at", "DESC")
     );
 
     return { feeds, feedsRemaining: Math.max(0, feedsCount - limit) };
@@ -164,12 +111,11 @@ class Feed extends guid(BaseModel) {
       if (!folders[folderId]) {
         folders[folderId] = {
           id: folderId,
-          href: `${API_BASE_URL}/feeds/?folder=${folderId}`,
           feeds: [],
         };
       }
-      const { id, title, hrefs, lastNewItem } = feed.toJSON();
-      folders[folderId].feeds.push({ id, title, hrefs, lastNewItem });
+      const { id, title, lastNewItem } = feed.toJSON();
+      folders[folderId].feeds.push({ id, title, lastNewItem });
     }
 
     return folders;
@@ -229,9 +175,7 @@ class Feed extends guid(BaseModel) {
   }
 
   static async pollFeedById(id, context, options) {
-    const feed = await this.query()
-      .where({ id })
-      .first();
+    const feed = await this.query().where({ id }).first();
     return feed.pollFeed(context, options);
   }
 
@@ -265,12 +209,7 @@ class Feed extends guid(BaseModel) {
 
     const age = timeStart - lastValidated;
     if (!force && lastValidated !== 0 && age < maxage) {
-      log.info(
-        "Skipping poll for fresh feed %s (%s < %s)",
-        title,
-        age,
-        maxage
-      );
+      log.info("Skipping poll for fresh feed %s (%s < %s)", title, age, maxage);
       return;
     }
 
@@ -318,7 +257,8 @@ class Feed extends guid(BaseModel) {
         const contentType = response.headers.get("content-type");
         const contentTypeParams = getParams(contentType || "");
         let charset = contentTypeParams.charset;
-        if (!charset) {
+
+        if (!charset && attrs.json.charset) {
           // HACK: Try to guess a charset from previous parsing
           // Maybe we need to do a speculative parsing instead to
           // get XML encoding from doctype?
@@ -327,6 +267,10 @@ class Feed extends guid(BaseModel) {
             prevCharset = attrs.json.meta["#xml"].encoding;
           }
           charset = prevCharset;
+        }
+
+        if (!charset) {
+          charset = DEFAULT_FEED_CHARSET;
         }
 
         let bodyStream = response.body;
@@ -387,7 +331,7 @@ class Feed extends guid(BaseModel) {
         }
 
         const defunctGuids = Array.from(existingGuids.values()).filter(
-          guid => !seenGuids.has(guid)
+          (guid) => !seenGuids.has(guid)
         );
 
         // Update defunct and new flags for this feed's items
@@ -430,8 +374,8 @@ class Feed extends guid(BaseModel) {
 }
 
 function getParams(str) {
-  var params = str.split(";").reduce(function(params, param) {
-    var parts = param.split("=").map(function(part) {
+  var params = str.split(";").reduce(function (params, param) {
+    var parts = param.split("=").map(function (part) {
       return part.trim();
     });
     if (parts.length === 2) {

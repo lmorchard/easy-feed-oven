@@ -5,6 +5,9 @@
   "author": "Les Orchard <me@lmorchard.com>",
   "license": "MIT",
   "scripts": {
+    "poll": "./index.js poll-feeds | pino-pretty",
+    "build": "./index.js build-site | pino-pretty",
+    "import-feeds": "./index.js opml-import sample.opml | pino-pretty",
     "migrate": "knex migrate:latest",
     "reset": "rm -rf data && mkdir data && knex migrate:latest"
   },
@@ -17,6 +20,7 @@
     "dotenv": "^8.2.0",
     "escape-html": "^1.0.3",
     "feedparser": "^2.2.10",
+    "http-server": "^0.12.3",
     "iconv": "^3.0.0",
     "knex": "^0.21.1",
     "mkdirp": "^1.0.4",
@@ -30,6 +34,7 @@
     "p-queue": "^6.4.0",
     "pino": "^6.3.2",
     "pino-pretty": "^4.0.0",
+    "reload": "^3.1.0",
     "rimraf": "^3.0.2",
     "sanitize-html": "^1.27.0",
     "sqlite3": "^4.2.0"

@@ -6,7 +6,7 @@ module.exports = (init, program) => {
   program
     .command("opml-import [filename]")
     .description("import from OPML")
-    .action(init(command, "opml-import"));
+    .action(init(command));
 };
 
 async function command(filename, env, context) {

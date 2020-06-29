@@ -30,16 +30,7 @@ class FeedItem extends guid(BaseModel) {
   }
 
   static get virtualAttributes() {
-    return ["hrefs", "html", "text"];
-  }
-
-  hrefs() {
-    const { API_BASE_URL } = this.constructor.config();
-    return {
-      self: `${API_BASE_URL}/items/${this.id}`,
-      html: `${API_BASE_URL}/items/${this.id}/html`,
-      feed: `${API_BASE_URL}/feeds/${this.feed_id}`,
-    };
+    return ["html", "text"];
   }
 
   // TODO: move html & text virtuals into parsing?
@@ -90,7 +81,7 @@ class FeedItem extends guid(BaseModel) {
 
     const items = await applyParams(
       this.query()
-        .eager("feed")
+        //.eager("feed")
         .orderBy("date", "DESC")
         .orderBy("id", "DESC")
         .limit(limit)
