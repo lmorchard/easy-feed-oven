@@ -9,6 +9,28 @@ const {
 } = require("../lib/files");
 const config = require("../lib/config");
 const { allFeeds, feedPage } = require("../templates");
+const {
+  ONE_HOUR,
+  THREE_HOURS,
+  SIX_HOURS,
+  HALF_DAY,
+  ONE_DAY,
+  THREE_DAYS,
+  ONE_WEEK,
+} = require("../lib/times");
+
+const ITEMS_PER_PAGE = 50;
+const ITEMS_LIMIT = 1000;
+
+const PAGE_AGE_THRESHOLDS = [
+  ONE_HOUR,
+  THREE_HOURS,
+  SIX_HOURS,
+  HALF_DAY,
+  ONE_DAY,
+  THREE_DAYS,
+  ONE_WEEK,
+];
 
 module.exports = (init, program) => {
   program
@@ -53,15 +75,14 @@ async function buildAssets(options, context) {
   }
 }
 
-const ITEMS_PER_PAGE = 10;
-
 const pageId = (feed, idx) => `page-${feed.id}-${idx}.html`;
 
 async function buildSite(options, context) {
   const { models, log, exit } = context;
   const { Feed, FeedItem } = models;
 
-  const after = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString();
+  const now = Date.now();
+  const after = new Date(now - ONE_WEEK).toISOString();
 
   const { feeds } = await Feed.queryWithParams({
     folder: null,
@@ -77,32 +98,41 @@ async function buildSite(options, context) {
 
     const { items } = await FeedItem.queryWithParams({
       feedId: feed.id,
-      limit: 1000,
+      limit: ITEMS_LIMIT,
       after: after,
     });
 
+    const pageTimeThresholds = PAGE_AGE_THRESHOLDS.map((age) =>
+      new Date(now - age).toISOString()
+    );
     const mkPage = () => ({ items: [], nextPage: null });
-    const pages = [mkPage()];
+    let pages = [mkPage()];
     for (const item of items) {
       const page = pages[pages.length - 1];
       page.items.push(item.toJSON());
-      if (page.items.length >= ITEMS_PER_PAGE) {
+      if (
+        (pageTimeThresholds.length && item.date < pageTimeThresholds[0])
+        //||
+        //(!pageTimeThresholds.length && page.items.length >= ITEMS_PER_PAGE)
+      ) {
+        pageTimeThresholds.shift();
         pages.push(mkPage());
       }
     }
+    pages = pages.filter((page) => page.items.length > 0);
 
     for (let idx = 0; idx < pages.length; idx++) {
       const page = pages[idx];
+      page.thisPage = pageId(feed, idx);
       if (pages[idx + 1] && pages[idx + 1].items.length) {
         page.nextPage = pageId(feed, idx + 1);
+        page.nextPageCount = pages[idx + 1].items.length;
       }
-      if (page.items.length && idx > 0) {
-        await writeFile(
-          path.join(config.buildPath, pageId(feed, idx)),
-          feedPage(page)(),
-          "utf-8"
-        );
-      }
+      await writeFile(
+        path.join(config.buildPath, pageId(feed, idx)),
+        feedPage({ feed, page })(),
+        "utf-8"
+      );
     }
 
     feedOut.pages = pages;

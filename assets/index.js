@@ -1,41 +1,107 @@
+const LAZY_LOAD_THRESHOLD = 0.1;
+
 async function main() {
-  initTimeAgo();
+  initLazyLoadObserver();
+  initEventDelegation();
+  pageChanged();
+
   console.log("READY.");
 }
 
-const initTimeAgo = () => {
+function pageChanged() {
+  applyTimeAgo();
+  updateLazyLoadObserver();
+}
+
+function applyTimeAgo() {
   timeago.cancel();
   timeago.render(document.querySelectorAll(".timeago"), "en_US", {
     minInterval: 10,
   });
 }
 
-document.body.addEventListener("click", async (ev) => {
-  const target = ev.target;
-  if (
-    /a/i.test(target.tagName) &&
-    target.classList.contains("load-href")
-  ) {
-    ev.preventDefault();
-    target.setAttribute("disabled", true);
-
-    const href = target.getAttribute("href");
-    const response = await fetch(href);
-    const content = await response.text();
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(content, "text/html");
-    const loadedNodes = Array.from(doc.body.children);
-
-    const container = target.parentNode;
-    const parent = container.parentNode;
-    for (const node of loadedNodes) {
-      parent.insertBefore(document.adoptNode(node), container);
+function initEventDelegation() {
+  document.body.addEventListener("click", async (ev) => {
+    const target = ev.target;
+    if (/a/i.test(target.tagName) && target.classList.contains("load-href")) {
+      handleLoaderClick(ev, target);
     }
+  });
+}
 
-    container.remove();
-    initTimeAgo();
+async function handleLoaderClick(ev, target) {
+  ev.preventDefault();
+  await replaceElementWithHTMLResource(
+    target.parentNode,
+    target.getAttribute("href")
+  );
+}
+
+async function replaceElementWithHTMLResource(element, href) {
+  if (element.classList.contains("loading")) { return; }
+  element.classList.add("loading");
+  element.setAttribute("disabled", true);
+
+  const response = await fetch(href);
+  const content = await response.text();
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(content, "text/html");
+  const loadedNodes = Array.from(doc.body.children);
+
+  const parent = element.parentNode;
+  for (const node of loadedNodes) {
+    parent.insertBefore(document.adoptNode(node), element);
   }
-});
 
-main().catch(err => console.error(err));
+  element.remove();
+  pageChanged();
+}
+
+async function handleLazyLoadIntersection({ target }) {
+  if (/img/i.test(target.tagName)) {
+    const src = target.getAttribute("data-src");
+    if (src) {
+      target.setAttribute("src", src);
+      target.removeAttribute("data-src");
+    }
+  }
+
+  if (
+    target.classList.contains("load-href") &&
+    target.classList.contains("load-when-visible")
+  ) {
+    await replaceElementWithHTMLResource(
+      target.parentNode,
+      target.getAttribute("href")
+    );
+  }
+}
+
+let lazyLoadObserver;
+function initLazyLoadObserver() {
+  lazyLoadObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          handleLazyLoadIntersection(entry);
+        }
+      }
+    },
+    {
+      threshold: LAZY_LOAD_THRESHOLD,
+    }
+  );
+}
+
+function updateLazyLoadObserver() {
+  lazyLoadObserver.disconnect();
+  const toObserve = document.querySelectorAll(".lazy-load");
+  for (const element of toObserve) {
+    lazyLoadObserver.observe(element);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", (event) => {
+  main().catch((err) => console.error(err));
+});
