@@ -15,15 +15,20 @@ async function main() {
   const program = new Command();
   program.version(pkgJson.version);
   const commandModules = [
-    "build-site",
+    "build",
     "add-feed",
     "remove-feed",
     "opml-import",
     "poll-feeds",
   ];
   commandModules.forEach((name) => require(`./${name}`)(init, program));
-  await program.parseAsync(process.argv);
-}
+  try {
+    await program.parseAsync(process.argv);
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+} 
 
 const init = (fn) => (...args) =>
   (async () => {

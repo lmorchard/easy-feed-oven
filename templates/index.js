@@ -4,60 +4,22 @@ const page = ({ title = "Easy Feed Oven" }, content) => html`
   <!DOCTYPE html>
   <html lang="en-us">
     <head>
-      <meta charset="utf-8" />
       <title>${title}</title>
-      <style type="text/css">
-body {
-  background-color: #ddd;
-}
-        .feeds {
-          margin: 0;
-          padding: 0;        
-        }
-
-        .feeds .feed {
-          list-style-type: none;        
-          margin-bottom: 1em;
-        }
-
-        .feed > .title {
-          font-size: 1.5em;
-        }
-
-        .feeditems {
-          margin: 0;
-          padding: 0;
-          margin-top: 1em;
-          display: flex;
-          flex-direction: row;
-          align-items: flex-start;
-          flex-wrap: wrap;
-        }
-
-        .feeditems .feeditem {
-          background-color: #fff;
-          border: 1px solid #aaa;
-          padding: 1em;
-          margin-right: 1em;
-          margin-bottom: 1em;
-          list-style-type: none;
-          flex-basis: 16%;
-          flex-grow: 1;
-           box-shadow: 0.25em 0.25em 0.5em rgba(0, 0, 0, 0.3);
-        }
-
-        .feeditem .title {
-          display: block;
-        }
-
-        .feeditem .text {
-          display: block;
-        }
-      
-      </style>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="initial-scale=1" />
+      <link
+        rel="stylesheet"
+        type="text/css"
+        href="//fonts.googleapis.com/css?family=Open+Sans"
+      />
+      <link rel="stylesheet" href="./index.css" />
     </head>
     <body>
       ${content}
+
+      <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+      <script src="./vendor/timeago.min.js"></script>
+      <script src="./index.js"></script>
     </body>
   </html>
 `;
@@ -66,7 +28,6 @@ const allFeeds = ({ feeds }) =>
   page(
     {},
     html`
-      <h1>Feeds</h1>
       <ul class="feeds">
         ${feeds.map(singleFeed)}
       </ul>
@@ -74,7 +35,8 @@ const allFeeds = ({ feeds }) =>
   );
 
 const singleFeed = (feed) => {
-  const { link, htmlurl, title, items, lastNewItem } = feed;
+  const { link, htmlurl, title, pages, lastNewItem } = feed;
+  const [firstPage] = pages;
   let feedHostname;
   try {
     const feedUrl = new URL(feed.link);
@@ -85,35 +47,63 @@ const singleFeed = (feed) => {
   return html`
     <li class="feed">
       <span class="title">
-        <img class="feedicon" width=16 height=16
-          src=${`https://www.google.com/s2/favicons?domain=${feedHostname}`} />
-        <a class="feedlink" href="${link}">${title}</a>
-        <span class="feeddate">${lastNewItem}</span>
+        <img
+          class="feedicon"
+          width="16"
+          height="16"
+          src="https://www.google.com/s2/favicons?domain=${feedHostname}"
+        />
+        <a class="feedlink" href="${link}" target="_blank">${title}</a>
+        <span class="feeddate timeago" datetime="${lastNewItem}"
+          >${lastNewItem}</span
+        >
       </span>
       <ul class="feeditems">
-        ${items && items.map(feedItem)}
+        ${firstPage && feedPage(firstPage)}
       </ul>
     </li>
   `;
 };
 
-const feedItem = (item) => {
-  const { link, title, summary, date, thumbUrl } = item;
-  const text = item.text();
+const feedPage = ({ items, nextPage }) => {
   return html`
-    <li class="feeditem" style="background-image: url(${thumbUrl})">
+    ${items && items.map(feedItem)}
+    ${nextPage && html`
+      <li class="next-feed-page">
+        <a class="load-href" href="${nextPage}">More feed items...</a>
+      </li>
+    `}
+  `;
+};
+
+const feedItem = (item) => {
+  const { link, title, summary, date, text, json } = item;
+  const { thumbUrl } = json;
+  //const text = item.text();
+  return html`
+    <li class="feeditem">
+      ${thumbUrl &&
+      html`<a target="_blank" href=${link}
+        ><img class="thumb" src="${thumbUrl}"
+      /></a>`}
       <div class="details">
-        ${title && html`<a class="title" href=${link}>${title}</a>`}
+        ${title &&
+        html`<a class="title" target="_blank" href=${link}>${title}</a>`}
         ${text &&
         html`
           <span class="text">
             ${text.length < 160 ? text : text.substr(0, 160) + "[...]"}
           </span>
         `}
-        ${thumbUrl}
       </div>
       <div class="date">
-        <a class="datelink" href=${link}>${date}</a>
+        <a
+          class="datelink timeago"
+          datetime="${date}"
+          target="_blank"
+          href=${link}
+          >${date}</a
+        >
       </div>
     </li>
   `;
@@ -122,4 +112,5 @@ const feedItem = (item) => {
 module.exports = {
   page,
   allFeeds,
+  feedPage,
 };

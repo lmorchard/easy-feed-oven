@@ -6,7 +6,10 @@
   "license": "MIT",
   "scripts": {
     "poll": "./index.js poll-feeds | pino-pretty",
-    "build": "./index.js build-site | pino-pretty",
+    "build": "npm-run-all --sequential build:*",
+    "clean": "./index.js clean-site | pino-pretty",
+    "build:site": "./index.js build-site | pino-pretty",
+    "build:assets": "./index.js build-assets | pino-pretty",
     "import-feeds": "./index.js opml-import sample.opml | pino-pretty",
     "migrate": "knex migrate:latest",
     "reset": "rm -rf data && mkdir data && knex migrate:latest"
@@ -26,6 +29,7 @@
     "mkdirp": "^1.0.4",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
+    "npm-run-all": "^4.1.5",
     "objection": "^2.2.0",
     "objection-db-errors": "^1.1.2",
     "objection-guid": "^3.0.2",
@@ -34,9 +38,12 @@
     "p-queue": "^6.4.0",
     "pino": "^6.3.2",
     "pino-pretty": "^4.0.0",
+    "recursive-copy": "^2.0.10",
     "reload": "^3.1.0",
     "rimraf": "^3.0.2",
     "sanitize-html": "^1.27.0",
-    "sqlite3": "^4.2.0"
+    "snowpack": "^2.6.1",
+    "sqlite3": "^4.2.0",
+    "timeago.js": "^4.0.2"
   }
 }
