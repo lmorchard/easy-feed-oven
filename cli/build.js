@@ -53,7 +53,7 @@ async function buildAssets(options, context) {
   }
 }
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 10;
 
 const pageId = (feed, idx) => `page-${feed.id}-${idx}.html`;
 

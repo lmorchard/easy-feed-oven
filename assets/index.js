@@ -17,7 +17,6 @@ document.body.addEventListener("click", async (ev) => {
     target.classList.contains("load-href")
   ) {
     ev.preventDefault();
-
     target.setAttribute("disabled", true);
 
     const href = target.getAttribute("href");
@@ -26,12 +25,12 @@ document.body.addEventListener("click", async (ev) => {
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(content, "text/html");
-    const loadedNodes = doc.body.children;
+    const loadedNodes = Array.from(doc.body.children);
 
     const container = target.parentNode;
     const parent = container.parentNode;
     for (const node of loadedNodes) {
-      parent.insertBefore(node, container);
+      parent.insertBefore(document.adoptNode(node), container);
     }
 
     container.remove();
