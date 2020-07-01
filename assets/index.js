@@ -67,10 +67,7 @@ async function handleLazyLoadIntersection({ target }) {
     }
   }
 
-  if (
-    target.classList.contains("load-href") &&
-    target.classList.contains("load-when-visible")
-  ) {
+  if (target.classList.contains("load-href")) {
     await replaceElementWithHTMLResource(
       target.parentNode,
       target.getAttribute("href")
