@@ -54,6 +54,11 @@ async function cleanBuild(options, { log }) {
 }
 
 async function buildAssets(options, context) {
+  await writeFile(
+    path.join(config.buildPath, '.nojekyll'),
+    "",
+    "utf-8"
+  );
   await copy(
     path.join(__dirname, "..", "assets"),
     path.join(config.buildPath),

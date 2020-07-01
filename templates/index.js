@@ -95,8 +95,8 @@ const feedItem = (item) => {
   return html`
     <li class="feeditem">
       ${thumbUrl &&
-      html`<a target="_blank" href=${link}
-        ><img class="thumb lazy-load" data-src="${thumbUrl}"
+      html`<a target="_blank" class="thumb" href=${link}
+        ><img class="lazy-load" data-src="${thumbUrl}"
       /></a>`}
       <div class="details">
         ${title &&
