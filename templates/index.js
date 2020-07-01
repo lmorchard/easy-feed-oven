@@ -1,5 +1,5 @@
 const { html, unescaped, urlencode } = require("../lib/html");
-const { ONE_HOUR } = require("../lib/times");
+const { ONE_HOUR, THREE_HOURS } = require("../lib/times");
 
 const page = ({ title = "Easy Feed Oven" }, content) => html`
   <!DOCTYPE html>
@@ -41,30 +41,33 @@ const singleFeed = (feed) => {
     console.log("Bad feed link for", feed.title);
   }
 
-  const shouldOpen = Date.now() - new Date(lastNewItem).getTime() <= ONE_HOUR;
+  const shouldOpen =
+    Date.now() - new Date(lastNewItem).getTime() <= THREE_HOURS;
 
   return html`
     <li class="feed">
       <details ${shouldOpen && "open"}>
         <summary>
-        <span class="title">
-          <img
-            class="feedicon lazy-load"
-            width="16"
-            height="16"
-            data-src="https://www.google.com/s2/favicons?domain=${feedHostname}"
-          />
-          <span class="feedtitle">${title}</span>
-          <span class="feeddate timeago" datetime="${lastNewItem}"
-            >${lastNewItem}</span
-          >
-        </span>
+          <span class="title">
+            <img
+              class="feedicon lazy-load"
+              width="16"
+              height="16"
+              data-src="https://www.google.com/s2/favicons?domain=${feedHostname}"
+            />
+            <span class="feedtitle">${title}</span>
+            <span class="feeddate timeago" datetime="${lastNewItem}"
+              >${lastNewItem}</span
+            >
+          </span>
         </summary>
         <ul class="feeditems">
           <li class="next-feed-page">
-            <a class="load-href lazy-load load-when-visible" href="${
-              firstPage.thisPage
-            }">Load ${title}...</a>
+            <a
+              class="load-href lazy-load load-when-visible"
+              href="${firstPage.thisPage}"
+              >Load ${title}...</a
+            >
           </li>
         </ul>
       </details>

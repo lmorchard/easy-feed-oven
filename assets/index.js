@@ -38,7 +38,9 @@ async function handleLoaderClick(ev, target) {
 }
 
 async function replaceElementWithHTMLResource(element, href) {
-  if (element.classList.contains("loading")) { return; }
+  if (element.classList.contains("loading")) {
+    return;
+  }
   element.classList.add("loading");
   element.setAttribute("disabled", true);
 
@@ -58,6 +60,29 @@ async function replaceElementWithHTMLResource(element, href) {
   pageChanged();
 }
 
+let lazyLoadObserver;
+function initLazyLoadObserver() {
+  lazyLoadObserver = new IntersectionObserver(handleAllLazyLoadIntersections, {
+    threshold: LAZY_LOAD_THRESHOLD,
+  });
+}
+
+function updateLazyLoadObserver() {
+  lazyLoadObserver.disconnect();
+  const toObserve = document.querySelectorAll(".lazy-load");
+  for (const element of toObserve) {
+    lazyLoadObserver.observe(element);
+  }
+}
+
+function handleAllLazyLoadIntersections(entries) {
+  for (const entry of entries) {
+    if (entry.isIntersecting) {
+      handleLazyLoadIntersection(entry);
+    }
+  }
+}
+
 async function handleLazyLoadIntersection({ target }) {
   if (/img/i.test(target.tagName)) {
     const src = target.getAttribute("data-src");
@@ -72,30 +97,6 @@ async function handleLazyLoadIntersection({ target }) {
       target.parentNode,
       target.getAttribute("href")
     );
-  }
-}
-
-let lazyLoadObserver;
-function initLazyLoadObserver() {
-  lazyLoadObserver = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          handleLazyLoadIntersection(entry);
-        }
-      }
-    },
-    {
-      threshold: LAZY_LOAD_THRESHOLD,
-    }
-  );
-}
-
-function updateLazyLoadObserver() {
-  lazyLoadObserver.disconnect();
-  const toObserve = document.querySelectorAll(".lazy-load");
-  for (const element of toObserve) {
-    lazyLoadObserver.observe(element);
   }
 }
 
