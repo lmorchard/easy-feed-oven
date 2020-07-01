@@ -87,6 +87,12 @@ body {
 }
 
 .feeditem .thumb {
+  display: block;
+  max-height: 10em;
+  overflow: hidden;
+}
+
+.feeditem .thumb img {
   max-width: 100%;
 }
 
