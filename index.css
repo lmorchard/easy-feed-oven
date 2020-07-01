@@ -90,7 +90,7 @@ body {
 
 .feeditem .thumb {
   display: block;
-  max-height: 10em;
+  max-height: 20em;
   overflow: hidden;
 }
 
