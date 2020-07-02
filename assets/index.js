@@ -31,6 +31,7 @@ function initEventDelegation() {
 
 async function handleLoaderClick(ev, target) {
   ev.preventDefault();
+  ev.stopPropagation();
   await replaceElementWithHTMLResource(
     target.parentNode,
     target.getAttribute("href")
