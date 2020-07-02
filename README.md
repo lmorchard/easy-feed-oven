@@ -13,7 +13,7 @@ Who knows!
 * Also install [Yarn](yarn).
 * Check out or [download](download) the code here.
 * Run `yarn install`
-* Run `yarn run reset` to initialize the SQLite database form scratch.
+* Run `yarn run reset` to initialize the SQLite database from scratch.
 * Maybe edit `sample.opml` to include your own RSS subscriptions.
   * That, or enjoy mine.
 * Run `yarn run import-feeds` to import the feeds from `sample.opml`
@@ -29,6 +29,8 @@ Who knows!
 
 ## TODO
 
+* See about hooking this up to a Github Action
+  * Will need to stash the SQLite DB somewhere to use from run-to-run
 * Add a fixed-position top nav bar with intersection observer support to detect what's the top-most visible feed
   * Collapse feed, skip to next feed, what else?
 * Maybe add some buttons to advance all feeds to a certain number of hours ago?
