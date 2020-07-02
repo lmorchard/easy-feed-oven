@@ -14,6 +14,7 @@ Who knows!
 * Check out or [download](download) the code here.
 * Run `yarn install`
 * Run `yarn run reset` to initialize the SQLite database from scratch.
+  * Only do this if you want a fresh, empty database - existing subscriptions and feed history will be erased.
 * Maybe edit `sample.opml` to include your own RSS subscriptions.
   * That, or enjoy mine.
 * Run `yarn run import-feeds` to import the feeds from `sample.opml`
@@ -21,7 +22,12 @@ Who knows!
 * Run `yarn run build` to bake a personal newspaper in the `build/` directory
 * If you have forked this to your own Github repository, `yarn run gh-pages` will deploy the build to your own Github Pages site associated with your fork.
 * Rinse and repeat the last three steps for fresh news.
+* If you update the code, you probably want to do these things:
+  * `yarn install`
+  * `yarn run migrate`
 * Investigate the commands offered by `./index.js` for additional fun.
+  * `./index.js add-feed -f foldername https://some.blog/`
+    * Useful for adding feeds after the initial import from OPML
 
 [download]: https://github.com/lmorchard/easy-feed-oven/archive/main.zip
 [nodejs]: https://nodejs.org/en/download/current/
@@ -36,3 +42,4 @@ Who knows!
 * Maybe add some buttons to advance all feeds to a certain number of hours ago?
 * Subscription editing would be nice from a web UI
   * Hard to do with a static site though
+  * If I wanted to be fancy / masochistic, I could edit `sample.opml` from a browser via Github API
