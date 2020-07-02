@@ -22,9 +22,15 @@ function applyTimeAgo() {
 
 function initEventDelegation() {
   document.body.addEventListener("click", async (ev) => {
-    const target = ev.target;
-    if (/a/i.test(target.tagName) && target.classList.contains("load-href")) {
-      handleLoaderClick(ev, target);
+    // Start from the target and walk up through parents to look for
+    // the real target we want to delegate. (i.e. click was on a span
+    // within a link, but the link is the relevant target)
+    let target = ev.target;
+    while (target) {
+      if (/a/i.test(target.tagName) && target.classList.contains("load-href")) {
+        return handleLoaderClick(ev, target);
+      }
+      target = target.parentNode;
     }
   });
 }
