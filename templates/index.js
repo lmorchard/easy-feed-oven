@@ -77,14 +77,21 @@ const singleFeed = (feed) => {
 // <a class="feedlink" href="${link}" target="_blank">${title}</a>
 // ${firstPage && feedPage(firstPage)}
 
-const feedPage = ({ feed, page: { items, nextPage, nextPageCount } }) => {
+const feedPage = ({
+  feed,
+  page: { items, nextPage, nextPageCount, nextPageTime },
+}) => {
   return html`
     ${items && items.map(feedItem)}
     ${nextPage &&
     html`
       <li class="next-feed-page">
         <a class="load-href" href="${nextPage}"
-          >${nextPageCount} more from ${feed.title}...</a
+          >${nextPageCount} more since
+          <span class="timeago" datetime="${nextPageTime}"
+            >${nextPageTime}</span
+          >
+          from ${feed.title}...</a
         >
       </li>
     `}

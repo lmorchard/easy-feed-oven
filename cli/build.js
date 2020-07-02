@@ -54,11 +54,7 @@ async function cleanBuild(options, { log }) {
 }
 
 async function buildAssets(options, context) {
-  await writeFile(
-    path.join(config.buildPath, '.nojekyll'),
-    "",
-    "utf-8"
-  );
+  await writeFile(path.join(config.buildPath, ".nojekyll"), "", "utf-8");
   await copy(
     path.join(__dirname, "..", "assets"),
     path.join(config.buildPath),
@@ -80,7 +76,7 @@ async function buildAssets(options, context) {
   }
 }
 
-const pageId = (feed, idx) => `page-${feed.id}-${idx}.html`;
+const pageId = ({ now, feed, idx }) => `page-${now}-${feed.id}-${idx}.html`;
 
 async function buildSite(options, context) {
   const { models, log, exit } = context;
@@ -110,16 +106,19 @@ async function buildSite(options, context) {
     const pageTimeThresholds = PAGE_AGE_THRESHOLDS.map((age) =>
       new Date(now - age).toISOString()
     );
-    const mkPage = () => ({ items: [], nextPage: null });
+
+    const mkPage = (meta = {}) => ({
+      items: [],
+      nextPage: null,
+      nextPageTime: pageTimeThresholds[1],
+      ...meta,
+    });
+
     let pages = [mkPage()];
     for (const item of items) {
       const page = pages[pages.length - 1];
       page.items.push(item.toJSON());
-      if (
-        (pageTimeThresholds.length && item.date < pageTimeThresholds[0])
-        //||
-        //(!pageTimeThresholds.length && page.items.length >= ITEMS_PER_PAGE)
-      ) {
+      if (pageTimeThresholds.length && item.date < pageTimeThresholds[0]) {
         pageTimeThresholds.shift();
         pages.push(mkPage());
       }
@@ -128,13 +127,13 @@ async function buildSite(options, context) {
 
     for (let idx = 0; idx < pages.length; idx++) {
       const page = pages[idx];
-      page.thisPage = pageId(feed, idx);
+      page.thisPage = pageId({ now, feed, idx });
       if (pages[idx + 1] && pages[idx + 1].items.length) {
-        page.nextPage = pageId(feed, idx + 1);
+        page.nextPage = pageId({ now, feed, idx: idx + 1 });
         page.nextPageCount = pages[idx + 1].items.length;
       }
       await writeFile(
-        path.join(config.buildPath, pageId(feed, idx)),
+        path.join(config.buildPath, pageId({ now, feed, idx })),
         feedPage({ feed, page })(),
         "utf-8"
       );
