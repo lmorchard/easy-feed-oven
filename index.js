@@ -22,9 +22,14 @@ function applyTimeAgo() {
 
 function initEventDelegation() {
   document.body.addEventListener("click", async (ev) => {
-    const target = ev.target;
-    if (/a/i.test(target.tagName) && target.classList.contains("load-href")) {
-      handleLoaderClick(ev, target);
+    console.log("CLICK DELEGATION GO", ev);
+    let target = ev.target;
+    while (target) {
+      if (/a/i.test(target.tagName) && target.classList.contains("load-href")) {
+        console.log("LOADER CLICK GO", ev);
+        return handleLoaderClick(ev, target);
+      }
+      target = target.parentNode;
     }
   });
 }
