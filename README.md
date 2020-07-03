@@ -35,6 +35,7 @@ Who knows!
 
 ## TODO
 
+* Generate per-folder index pages, add pop-out folder list to top nav
 * See about hooking this up to a Github Action
   * Will need to stash the SQLite DB somewhere to use from run-to-run
 * Add a fixed-position top nav bar with intersection observer support to detect what's the top-most visible feed
