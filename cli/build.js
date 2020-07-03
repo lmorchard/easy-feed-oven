@@ -107,11 +107,10 @@ async function buildSite(options, context) {
       new Date(now - age).toISOString()
     );
 
-    const mkPage = (meta = {}) => ({
+    const mkPage = () => ({
       items: [],
       nextPage: null,
       nextPageTime: pageTimeThresholds[1],
-      ...meta,
     });
 
     let pages = [mkPage()];
@@ -124,6 +123,10 @@ async function buildSite(options, context) {
       }
     }
     pages = pages.filter((page) => page.items.length > 0);
+
+    if (!pages.length) {
+      continue;
+    }
 
     for (let idx = 0; idx < pages.length; idx++) {
       const page = pages[idx];
