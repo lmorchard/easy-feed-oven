@@ -2,8 +2,29 @@ body {
   background-color: #eee;
   font-family: sans-serif;
   font-size: 14px;
-  padding: 1em 1em;
+  padding: 4em 1em 1em 1em;
   margin: 0.5em;
+}
+
+.topnav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+
+  padding: 0.5em 1.5em;
+  background-color: #fff;
+  border: 1px solid #aaa;
+  height: 2em;
+  box-shadow: 0px 4px 3px rgba(0, 0, 0, 0.4);
+}
+
+.folder-menu {
+  /* Default state */
+}
+#folder-menu-toggle:checked ~ .folder-menu {
+  /* A toggled state! No JavaScript! */
 }
 
 .feeds {
