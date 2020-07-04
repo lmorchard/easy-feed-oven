@@ -168,20 +168,19 @@ body {
   background-color: rgba(255, 255, 255, 0.5);
   overflow-wrap: break-word;
   text-decoration: none;
-  color: rgba(0, 0, 0, 1.0);
+  padding: 1em;
+  color: rgba(255,255,255, 1.0);
+  background-color: rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 2px #000;
 }
 
 .feeditem.has-thumb summary .title {
   position: absolute;
   bottom: 0;
-  padding: 1em;
-  color: rgba(255,255,255, 1.0);
-  background-color: rgba(0, 0, 0, 0.6);
-  text-shadow: 2px 2px 2px #000;
 }
 
 .feeditem .text {
-  padding: 0.5em 1em;
+  padding: 1em 1em;
   display: block;
   margin-bottom: 0.75em;
   background-color: rgba(255, 255, 255, 0.3);
