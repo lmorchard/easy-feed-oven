@@ -75,7 +75,7 @@ body {
 .feed > details > summary {
   display: block;
   position: sticky;
-  top: -2px;
+  top: 0px;
   z-index: 20;
   font-size: 1.5em;
   padding: 0.5em 1em;
@@ -201,6 +201,9 @@ body {
   }
   .feed > .title,
   .feed > details > summary {
+    font-size: 1.125em;
+  }
+  .feeditems .next-feed-page a {
     font-size: 1em;
   }
   .feeditems .feeditem {
@@ -226,7 +229,5 @@ body {
     width: 100%;
     flex-basis: inherit;
     max-width: inherit;
-  }
-  .feed .feeddate {
   }
 }
