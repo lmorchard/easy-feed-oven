@@ -81,7 +81,6 @@ function initFeedTitleObserver() {
     },
     {
       threshold: 0.2,
-      root: document.querySelector(".topnav"),
     }
   );
 }
@@ -95,7 +94,7 @@ function updateFeedTitleObserver() {
 }
 
 async function handleFeedTitleIntersection(entry) {
-  console.log("TITLE MENU", entry);
+  // console.log(entry);
 }
 
 let lazyLoadObserver;

@@ -74,7 +74,12 @@ body {
 .feed > .title,
 .feed > details > summary {
   display: block;
+  /*
   position: relative;
+  */
+  position: sticky;
+  top: -2px;
+  z-index: 20;
   font-size: 1.5em;
   padding: 0.5em 1em;
   margin: 0 0 1em 0;
