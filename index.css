@@ -25,7 +25,7 @@ body {
   background-repeat: no-repeat;
   display: block;
   width: 32px;
-  height: 32px;  
+  height: 32px;
   overflow: hidden;
   text-indent: 10em;
 }
@@ -74,9 +74,6 @@ body {
 .feed > .title,
 .feed > details > summary {
   display: block;
-  /*
-  position: relative;
-  */
   position: sticky;
   top: -2px;
   z-index: 20;
@@ -122,7 +119,7 @@ body {
 
   flex-grow: 1;
   margin-right: 1.25em;
-  
+
   flex-basis: calc(100% / 5);
   max-width: calc(100vw / 5 - 2em);
 }
@@ -201,6 +198,10 @@ body {
   }
   .folder-menu {
     width: 100%;
+  }
+  .feed > .title,
+  .feed > details > summary {
+    font-size: 0.75em;
   }
   .feeditems .feeditem {
     flex-basis: calc(100% / 2);
