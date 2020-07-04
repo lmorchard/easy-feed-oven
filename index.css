@@ -150,6 +150,10 @@ body {
   position: relative;
 }
 
+.feeditem.feeditem.has-thumb summary {
+  min-height: 6em;
+}
+
 .feeditem .thumb {
   display: block;
   max-height: 20em;
