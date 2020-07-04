@@ -201,7 +201,7 @@ body {
   }
   .feed > .title,
   .feed > details > summary {
-    font-size: 0.9em;
+    font-size: 0.95em;
   }
   .feeditems .feeditem {
     flex-basis: calc(100% / 2);
