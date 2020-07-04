@@ -2,6 +2,7 @@ const LAZY_LOAD_THRESHOLD = 0.1;
 
 async function main() {
   initLazyLoadObserver();
+  initFeedTitleObserver();
   initEventDelegation();
   pageChanged();
 
@@ -11,6 +12,7 @@ async function main() {
 function pageChanged() {
   applyTimeAgo();
   updateLazyLoadObserver();
+  updateFeedTitleObserver();
 }
 
 function applyTimeAgo() {
@@ -67,11 +69,49 @@ async function replaceElementWithHTMLResource(element, href) {
   pageChanged();
 }
 
+let feedTitleObserver;
+function initFeedTitleObserver() {
+  feedTitleObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          handleFeedTitleIntersection(entry);
+        }
+      }
+    },
+    {
+      threshold: 0.2,
+      root: document.querySelector(".topnav"),
+    }
+  );
+}
+
+function updateFeedTitleObserver() {
+  feedTitleObserver.disconnect();
+  const toObserve = document.querySelectorAll(".feed .title");
+  for (const element of toObserve) {
+    feedTitleObserver.observe(element);
+  }
+}
+
+async function handleFeedTitleIntersection(entry) {
+  console.log("TITLE MENU", entry);
+}
+
 let lazyLoadObserver;
 function initLazyLoadObserver() {
-  lazyLoadObserver = new IntersectionObserver(handleAllLazyLoadIntersections, {
-    threshold: LAZY_LOAD_THRESHOLD,
-  });
+  lazyLoadObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          handleLazyLoadIntersection(entry);
+        }
+      }
+    },
+    {
+      threshold: LAZY_LOAD_THRESHOLD,
+    }
+  );
 }
 
 function updateLazyLoadObserver() {
@@ -79,14 +119,6 @@ function updateLazyLoadObserver() {
   const toObserve = document.querySelectorAll(".lazy-load");
   for (const element of toObserve) {
     lazyLoadObserver.observe(element);
-  }
-}
-
-function handleAllLazyLoadIntersections(entries) {
-  for (const entry of entries) {
-    if (entry.isIntersecting) {
-      handleLazyLoadIntersection(entry);
-    }
   }
 }
 
