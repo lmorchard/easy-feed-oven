@@ -137,12 +137,17 @@ body {
   font-weight: bold;
   text-align: center;
   background-color: rgba(255, 255, 255, 1);
+  text-decoration: none;
 }
 .feeditems .next-feed-page a:hover {
   background-color: rgba(255, 255, 255, 0.8);
 }
 .feeditems .next-feed-page.loading a {
   opacity: 0.5;
+}
+
+.feeditem summary {
+  position: relative;
 }
 
 .feeditem .thumb {
@@ -156,11 +161,23 @@ body {
 }
 
 .feeditem .title {
+  width: calc(100% - 2em);
   padding: 0.5em 1em;
   display: block;
   font-weight: 600;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.5);
   overflow-wrap: break-word;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+.feeditem.has-thumb summary .title {
+  position: absolute;
+  bottom: 0;
+  padding: 1em;
+  color: rgba(255,255,255, 1.0);
+  background-color: rgba(0, 0, 0, 0.6);
+  text-shadow: 2px 2px 2px #000;
 }
 
 .feeditem .text {
