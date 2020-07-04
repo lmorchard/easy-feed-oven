@@ -85,17 +85,12 @@ async function buildSite(options, context) {
   const now = Date.now();
   const after = new Date(now - ONE_WEEK).toISOString();
 
-  const { feeds } = await Feed.queryWithParams({
-    folder: null,
-    limit: null,
-    after: after,
-    before: null,
-  });
-
-  const out = [];
+  const { feeds } = await Feed.queryWithParams({ after });
+  const allFeedsData = [];
+  const feedFolders = {};
 
   for (const feed of feeds) {
-    const feedOut = feed.toJSON();
+    const feedData = feed.toJSON();
 
     const { items } = await FeedItem.queryWithParams({
       feedId: feed.id,
@@ -142,15 +137,30 @@ async function buildSite(options, context) {
       );
     }
 
-    feedOut.pages = pages;
-    out.push(feedOut);
+    feedData.pages = pages;
+
+    allFeedsData.push(feedData);
+    if (!feedFolders[feed.folder]) {
+      feedFolders[feed.folder] = [];
+    }
+    feedFolders[feed.folder].push(feedData);
   }
+
+  const folderNames = Object.keys(feedFolders);
 
   await writeFile(
     path.join(config.buildPath, "index.html"),
-    allFeeds({ feeds: out })(),
+    allFeeds({ feeds: allFeedsData, folderNames })(),
     "utf-8"
   );
+
+  for (const [folder, feedsData] of Object.entries(feedFolders)) {
+    await writeFile(
+      path.join(config.buildPath, `${folder}.html`),
+      allFeeds({ feeds: feedsData, folderNames })(),
+      "utf-8"
+    );
+  }
 
   exit();
 }

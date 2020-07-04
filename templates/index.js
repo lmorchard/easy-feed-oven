@@ -19,10 +19,25 @@ const page = ({ title = "Easy Feed Oven" }, content) => html`
   </html>
 `;
 
-const allFeeds = ({ feeds }) =>
+const allFeeds = ({ feeds, folderNames }) =>
   page(
     {},
     html`
+      <nav class="topnav">
+        <label class="folder-menu-control" for="folder-menu-toggle">
+          Menu
+        </label>
+        <input type="checkbox" id="folder-menu-toggle">
+        <div class="folder-menu">
+          <p class="title">Folders:</p>
+          <ul>
+            <li><a href="index.html">All</a></li>
+            ${folderNames.map(name => html`
+              <li><a href="${name}.html">${name}</a></li>
+            `)}
+          </ul>
+        </div>
+      </nav>
       <ul class="feeds">
         ${feeds.map(singleFeed)}
       </ul>
@@ -41,8 +56,8 @@ const singleFeed = (feed) => {
     console.log("Bad feed link for", feed.title);
   }
 
-  const shouldOpen =
-    Date.now() - new Date(lastNewItem).getTime() <= THREE_HOURS;
+  const shouldOpen = true;
+  //  Date.now() - new Date(lastNewItem).getTime() <= THREE_HOURS;
 
   return html`
     <li class="feed">

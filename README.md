@@ -35,6 +35,8 @@ Who knows!
 
 ## TODO
 
+* Generate a page for rarely-updated feeds
+  * e.g. for keeping up with certain blogs that would otherwise get washed out in the rest of the flow 
 * Generate per-folder index pages, add pop-out folder list to top nav
 * See about hooking this up to a Github Action
   * Will need to stash the SQLite DB somewhere to use from run-to-run
