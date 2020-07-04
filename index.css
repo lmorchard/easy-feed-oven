@@ -202,9 +202,6 @@ body {
   .folder-menu {
     width: 100%;
   }
-  .feed .title {
-    font-size: 0.75em;    
-  }
   .feeditems .feeditem {
     flex-basis: calc(100% / 2);
     max-width: calc(100vw / 2 - 3em);
