@@ -107,7 +107,7 @@ body {
 
 .feeditems .feeditem {
   position: relative;
-  padding-bottom: 1.5em;
+  padding-bottom: 2.5em;
   margin-bottom: 1em;
   list-style-type: none;
   background-color: #fff;
@@ -187,23 +187,21 @@ body {
 .feeditem .text {
   padding: 1em 1em;
   display: block;
-  margin-bottom: 0.75em;
+  margin-bottom: 0.25em;
   background-color: rgba(255, 255, 255, 0.3);
 }
 
 .feeditem .author {
   display: block;
   position: absolute;
-  font-size: 0.75em;
-  left: 1.25em;
+  right: 1.25em;
   bottom: 0.75em;
 }
 
 .feeditem .date {
   display: block;
   position: absolute;
-  font-size: 0.75em;
-  right: 1.25em;
+  left: 1.25em;
   bottom: 0.75em;
 }
 
