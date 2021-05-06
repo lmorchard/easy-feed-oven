@@ -42,7 +42,7 @@
     "recursive-copy": "^2.0.10",
     "reload": "^3.1.0",
     "rimraf": "^3.0.2",
-    "sanitize-html": "^1.27.0",
+    "sanitize-html": "^2.3.2",
     "snowpack": "^2.6.1",
     "sqlite3": "^4.2.0",
     "timeago.js": "^4.0.2"
