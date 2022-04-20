@@ -20,7 +20,7 @@
     "cheerio": "^1.0.0-rc.3",
     "classnames": "^2.2.6",
     "commander": "^5.1.0",
-    "convict": "^6.0.0",
+    "convict": "^6.2.2",
     "dotenv": "^8.2.0",
     "escape-html": "^1.0.3",
     "feedparser": "^2.2.10",
