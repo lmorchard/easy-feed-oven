@@ -1,22 +1,29 @@
-const { Command } = require("commander");
-const pkgJson = require("../package.json");
-const makeLog = require("../lib/log");
-const config = require("../lib/config");
+import { Command } from "commander";
+import { readFile } from "fs/promises";
+import makeLog from "../lib/log.js";
+import config from "../lib/config.js";
 
-module.exports = () => {
+const commandModules = ["play"];
+
+export default function () {
   main().catch((err) => {
     console.error(err);
     process.exit(1);
-  });  
-};
+  });
+}
 
-async function main() {
+export async function main() {
+  const pkgJson = JSON.parse(
+    await readFile(
+      new URL('../package.json', import.meta.url)
+    )
+  );
   const program = new Command();
   program.version(pkgJson.version);
-  const commandModules = [
-    "play",
-  ];
-  commandModules.forEach((name) => require(`./${name}`)(init, program));
+  for (const name of commandModules) {
+    const module = await import(`./${name}.js`);
+    module.default(init, program);
+  }
   try {
     await program.parseAsync(process.argv);
   } catch (err) {
@@ -25,15 +32,17 @@ async function main() {
   }
 }
 
-const init = (fn) => (...args) =>
-  (async () => {
-    const command = args[args.length - 1];
-    const commandName = command._name;
-    const log = makeLog(commandName);
-    try {
-      const context = { config, log };
-      await fn(...args, context);
-    } catch (error) {
-      log.error(error);
-    }
-  })();
+const init =
+  (fn) =>
+  (...args) =>
+    (async () => {
+      const command = args[args.length - 1];
+      const commandName = command._name;
+      const log = makeLog(commandName);
+      try {
+        const context = { config, log };
+        await fn(...args, context);
+      } catch (error) {
+        log.error(error);
+      }
+    })();

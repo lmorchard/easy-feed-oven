@@ -1,15 +1,15 @@
 {
-  "name": "easy-feed-oven-2",
-  "version": "1.0.0",
+  "name": "easy-feed-oven",
+  "version": "0.0.1",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "abort-controller": "^3.0.0",
     "axios": "^0.27.0",
     "cheerio": "^1.0.0-rc.10",
     "commander": "^9.2.0",
