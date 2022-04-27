@@ -1,13 +1,7 @@
 import fs from "fs";
-import path from "path";
-import axios from "axios";
-import mkdirp from "mkdirp";
 import PQueue from "p-queue";
 import { MetaPriorityQueue } from "../lib/queue.js";
 import { Feed } from "../lib/models.js";
-
-// import { parseOpmlStream } from "../lib/index.js";
-import { fetchFeed, findFeeds, feedUrlToFilename } from "../lib/feeds.js";
 
 export default function (init, program) {
   program
@@ -81,3 +75,23 @@ async function command(options, command, context) {
 
   clearInterval(queueStatusTimer);
 }
+
+export const parseOpmlStream = ({ stream }) =>
+  new Promise((resolve, reject) => {
+    let meta = {};
+    const items = [];
+
+    const parser = new OpmlParser();
+
+    parser.on("error", reject);
+    parser.on("end", () => resolve({ meta, items }));
+    parser.on("readable", function () {
+      meta = this.meta;
+      let outline;
+      while ((outline = this.read())) {
+        items.push(outline);
+      }
+    });
+
+    stream.pipe(parser);
+  });
