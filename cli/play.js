@@ -4,8 +4,8 @@ import axios from "axios";
 import mkdirp from "mkdirp";
 import PQueue from "p-queue";
 import { MetaPriorityQueue } from "../lib/queue.js";
+import { Feed } from "../lib/models.js";
 
-import config from "../lib/config.js";
 // import { parseOpmlStream } from "../lib/index.js";
 import { fetchFeed, findFeeds, feedUrlToFilename } from "../lib/feeds.js";
 
@@ -17,7 +17,7 @@ export default function (init, program) {
 }
 
 async function command(options, command, context) {
-  const { log } = context;
+  const { config, log } = context;
   /*
   const stream = fs.createReadStream(filename, { encoding: "utf8" });
   const { meta, items } = await parseOpmlStream({ stream, log });
@@ -30,9 +30,6 @@ async function command(options, command, context) {
   /*
   console.log(feed);
   */
-
-  const feedDataPath = "./data/feeds";
-  await mkdirp(feedDataPath);
 
   const data = fs.readFileSync("data/feeds.txt", "UTF-8");
   const lines = data.split(/\r?\n/).filter((line) => !!line);
@@ -62,42 +59,23 @@ async function command(options, command, context) {
     );
   }, 1000);
 
-  await Promise.all(
-    lines.map((feedurl) =>
-      fetchQueue.add(
-        async () => {
-          log.info(`Fetching ${feedurl}`);
-          try {
-            const { feedUrl, meta, items } = await fetchFeed({
-              url: feedurl,
-              log,
-            });
+  const queueFetch = (url) =>
+    fetchQueue.add(
+      async () => {
+        log.info(`Fetching ${url}`);
+        try {
+          const feed = new Feed(url, config, log);
+          await feed.load();
+          await feed.fetch();
+          await feed.save();
+        } catch (e) {
+          log.error(e);
+        }
+      },
+      { meta: { url } }
+    );
 
-            const dataPath = path.join(
-              feedDataPath,
-              await feedUrlToFilename(feedUrl)
-            );
-            await mkdirp(dataPath);
-
-            log.info(`Writing ${dataPath}`);
-
-            const metaData = { url: feedUrl, meta };
-            fs.writeFileSync(
-              path.join(dataPath, "meta.json"),
-              JSON.stringify(metaData, null, "  ")
-            );
-            fs.writeFileSync(
-              path.join(dataPath, "items.json"),
-              JSON.stringify(items, null, "  ")
-            );
-          } catch (e) {
-            log.error(e);
-          }
-        },
-        { meta: { feedurl } }
-      )
-    )
-  );
+  await Promise.all(lines.map(queueFetch));
 
   log.info("Feed polling complete. (%sms)", Date.now() - timeStart);
 
