@@ -63,6 +63,7 @@ async function command(options, command, context) {
           await feed.fetch();
           await feed.save();
         } catch (e) {
+          log.error("Unexpected error");
           log.error(e);
         }
       },
