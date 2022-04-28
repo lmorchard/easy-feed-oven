@@ -30,6 +30,7 @@ async function command(options, command, context) {
 
   const fetchQueue = new PQueue({
     concurrency: config.feedPollConcurrency,
+    /*
     queueClass: MetaPriorityQueue({
       onAdd: (meta) => {
         log.debug("Fetch queue add %s", JSON.stringify(meta));
@@ -41,6 +42,7 @@ async function command(options, command, context) {
         log.debug("Fetch queue resolved %s", JSON.stringify(meta));
       },
     }),
+    */
   });
 
   const timeStart = Date.now();
@@ -58,10 +60,7 @@ async function command(options, command, context) {
       async () => {
         log.info(`Fetching ${url}`);
         try {
-          const feed = new Feed(url, config, log);
-          await feed.load();
-          await feed.fetch();
-          await feed.save();
+          await new Feed(url, config, log).poll();
         } catch (e) {
           log.error("Unexpected error");
           log.error(e);
