@@ -1,7 +1,4 @@
-import fs from "fs";
-import PQueue from "p-queue";
-import { MetaPriorityQueue } from "../lib/queue.js";
-import { FeedSet, Feed } from "../lib/models.js";
+import { FeedSet } from "../lib/models/index.js";
 
 export default function (init, program) {
   program
