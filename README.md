@@ -4,9 +4,9 @@ A toaster oven for personal newspapers
 
 ## todo
 
-- [ ] load & update pre-existing pages of items
+- [x] load & update pre-existing pages of items
 - [ ] handle etag and last-modified for 301 responses
-- [ ] build an entrypoint index JSON mapping all feeds to meta.json's
+- [x] build an entrypoint index JSON mapping all feeds to meta.json's
   - include title, oldest / newest item dates?
 - [ ] purge older item pages past a certain max age
 - [ ] track when the last new item was seen for dynamic poll time increase
