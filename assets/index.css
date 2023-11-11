@@ -25,7 +25,7 @@ body {
   background-repeat: no-repeat;
   display: block;
   width: 32px;
-  height: 32px;  
+  height: 32px;
   overflow: hidden;
   text-indent: 10em;
 }
@@ -74,7 +74,9 @@ body {
 .feed > .title,
 .feed > details > summary {
   display: block;
-  position: relative;
+  position: sticky;
+  top: 01px;
+  z-index: 20;
   font-size: 1.5em;
   padding: 0.5em 1em;
   margin: 0 0 1em 0;
@@ -105,7 +107,7 @@ body {
 
 .feeditems .feeditem {
   position: relative;
-  padding-bottom: 1.5em;
+  padding-bottom: 2.5em;
   margin-bottom: 1em;
   list-style-type: none;
   background-color: #fff;
@@ -117,7 +119,7 @@ body {
 
   flex-grow: 1;
   margin-right: 1.25em;
-  
+
   flex-basis: calc(100% / 5);
   max-width: calc(100vw / 5 - 2em);
 }
@@ -135,12 +137,21 @@ body {
   font-weight: bold;
   text-align: center;
   background-color: rgba(255, 255, 255, 1);
+  text-decoration: none;
 }
 .feeditems .next-feed-page a:hover {
   background-color: rgba(255, 255, 255, 0.8);
 }
 .feeditems .next-feed-page.loading a {
   opacity: 0.5;
+}
+
+.feeditem summary {
+  position: relative;
+}
+
+.feeditem.feeditem.has-thumb summary {
+  min-height: 6em;
 }
 
 .feeditem .thumb {
@@ -154,25 +165,43 @@ body {
 }
 
 .feeditem .title {
+  width: calc(100% - 2em);
   padding: 0.5em 1em;
   display: block;
   font-weight: 600;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.5);
   overflow-wrap: break-word;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+.feeditem.has-thumb summary .title {
+  position: absolute;
+  bottom: 0;
+  padding: 1em;
+  color: rgba(255,255,255, 1.0);
+  background-color: rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 2px #000;
 }
 
 .feeditem .text {
-  padding: 0.5em 1em;
+  padding: 1em 1em;
   display: block;
-  margin-bottom: 0.75em;
+  margin-bottom: 0.25em;
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+.feeditem .author {
+  display: block;
+  position: absolute;
+  right: 1.25em;
+  bottom: 0.75em;
 }
 
 .feeditem .date {
   display: block;
   position: absolute;
-  font-size: 0.75em;
-  right: 0.75em;
+  left: 1.25em;
   bottom: 0.75em;
 }
 
@@ -197,6 +226,14 @@ body {
   .folder-menu {
     width: 100%;
   }
+  .feed > .title,
+  .feed > details > summary {
+    font-size: 1.125em;
+    font-weight: bold;
+  }
+  .feeditems .next-feed-page a {
+    font-size: 1em;
+  }
   .feeditems .feeditem {
     flex-basis: calc(100% / 2);
     max-width: calc(100vw / 2 - 3em);
@@ -204,7 +241,6 @@ body {
   .feed .feeddate {
     position: inherit;
     right: inherit;
-    display: block;
   }
 }
 
@@ -221,8 +257,5 @@ body {
     width: 100%;
     flex-basis: inherit;
     max-width: inherit;
-  }
-  .feed .feeddate {
-    display: block;
   }
 }

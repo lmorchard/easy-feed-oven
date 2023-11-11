@@ -116,16 +116,23 @@ const feedPage = ({
 const feedItem = (item) => {
   const { link, title, summary, date, text, json } = item;
   const { thumbUrl } = json;
-  //const text = item.text();
+
+  let author;
+  if (json['dc:creator'] && json['dc:creator']['#']) {
+    author = json['dc:creator']['#'];
+  }
+
   return html`
-    <li class="feeditem">
-      ${thumbUrl &&
-      html`<a target="_blank" class="thumb" href=${link}
-        ><img class="lazy-load" data-src="${thumbUrl}"
-      /></a>`}
-      <div class="details">
+    <li class="feeditem${thumbUrl && ' has-thumb'}">
+      <summary>
+        ${thumbUrl &&
+        html`<a target="_blank" class="thumb" href=${link}
+          ><img class="lazy-load" data-src="${thumbUrl}"
+        /></a>`}
         ${title &&
         html`<a class="title" target="_blank" href=${link}>${title}</a>`}
+      </summary>
+      <div class="details">
         ${text &&
         html`
           <span class="text">
@@ -133,6 +140,9 @@ const feedItem = (item) => {
           </span>
         `}
       </div>
+      ${author && html`
+          <span class="author">${author}</span>
+        `}
       <div class="date">
         <a
           class="datelink timeago"

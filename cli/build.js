@@ -76,8 +76,6 @@ async function buildAssets(options, context) {
   }
 }
 
-const pageId = ({ now, feed, idx }) => `page-${now}-${feed.id}-${idx}.html`;
-
 async function buildSite(options, context) {
   const { models, log, exit } = context;
   const { Feed, FeedItem } = models;
@@ -102,6 +100,8 @@ async function buildSite(options, context) {
       new Date(now - age).toISOString()
     );
 
+    //const pageFileName = (idx) => `page-${now}-${feed.id}-${idx}.html`;
+    const pageFileName = (idx) => `page-${feed.id}-${idx}.html`;
     const mkPage = () => ({
       items: [],
       nextPage: null,
@@ -125,13 +125,13 @@ async function buildSite(options, context) {
 
     for (let idx = 0; idx < pages.length; idx++) {
       const page = pages[idx];
-      page.thisPage = pageId({ now, feed, idx });
+      page.thisPage = pageFileName(idx);
       if (pages[idx + 1] && pages[idx + 1].items.length) {
-        page.nextPage = pageId({ now, feed, idx: idx + 1 });
+        page.nextPage = pageFileName(idx + 1);
         page.nextPageCount = pages[idx + 1].items.length;
       }
       await writeFile(
-        path.join(config.buildPath, pageId({ now, feed, idx })),
+        path.join(config.buildPath, pageFileName(idx)),
         feedPage({ feed, page })(),
         "utf-8"
       );
